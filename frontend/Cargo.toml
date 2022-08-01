@@ -6,3 +6,20 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+born = "0.0.1"
+yew = "0.19.3"
+gloo = "0.8.0"
+gloo-console = "0.2.1"
+js-sys = "0.3.59"
+wasm-bindgen = "0.2.82"
+ybc = "0.2.1"
+console_error_panic_hook = "0.1.7"
+
+[build-dependencies]
+trunk = "0.16.0"
+
+
+[package.metadata.x]
+dev-css = "NODE_ENV=dev npx tailwindcss -c ./config/tailwind.config.js -o ./static/tailwind.css"
+minify-css = "NODE_ENV=production npx tailwindcss -c ./config/tailwind.config.js -o ./static/tailwind.css --minify"
+dev = "trunk --config config/Trunk.toml serve"
