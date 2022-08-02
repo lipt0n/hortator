@@ -1,7 +1,8 @@
 use console_error_panic_hook::set_once as set_panic_hook;
 use gloo_console::log;
 use yew::functional::function_component as fc;
-use yew::{html, use_state, use_effect, use_effect_with_deps, Renderer, Html};
+use yew::{html, use_effect_with_deps};
+mod form;
 mod login;
 // Define the possible messages which can be sent to the component
 
@@ -15,7 +16,6 @@ fn main_component() -> Html {
         0, // deps works as second param in react
     );
 
-
     html! {
         <div>
         <login::Login />
@@ -26,9 +26,6 @@ fn main_component() -> Html {
 
 fn main() {
     set_panic_hook();
-  //  yew::renderer::App::<Main>::new().mount_to_body();
- //   yew::Renderer::<Main>::new().render();
-    Renderer::<Main>::new().render();
 
-   // yew::start_app::<Main>();
+    yew::start_app::<Main>();
 }

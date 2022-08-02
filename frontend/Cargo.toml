@@ -10,7 +10,7 @@ debug = true
 
 [dependencies]
 born = "0.0.1"
-yew = { package = "yew", version="0.19.3", path = "../../yew/packages/yew" , features = ["csr"]}
+yew = { package = "yew", version="0.19.3"}
 gloo = "0.8.0"
 gloo-console = "0.2.1"
 js-sys = "0.3.59"
