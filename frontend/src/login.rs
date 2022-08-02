@@ -1,13 +1,44 @@
+use std::rc::Rc;
 use wasm_bindgen::JsCast;
+use yew::html::IntoPropValue;
+
 use gloo_console::log;
+use serde::{Deserialize, Serialize};
 use yew::functional::function_component as fc;
-use yew::{html, use_state, use_effect, use_effect_with_deps, Event, Callback, SubmitEvent, Html};
-use serde_json;
-use serde::Deserialize;
-use web_sys::{HtmlInputElement, EventTarget};
+use yew::{
+    html, use_effect, use_effect_with_deps, use_reducer, use_state, Callback, Event, Html,
+    Reducible, SubmitEvent,
+};
+//use serde_json;
+//use serde::Deserialize;
+use web_sys::{EventTarget, HtmlInputElement, KeyboardEvent};
 
-use validator::{ Validate, ValidationError};
+//use validator::{ Validate, ValidationError};
+#[derive(Serialize, Deserialize, Default, Clone, PartialEq, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct LoginModel {
+    pub email: String,
+    pub password: String,
+}
+#[derive(Clone, Debug)]
+pub struct LoginAction {
+    pub key: String,
+    pub value: String,
+}
 
+impl Reducible for LoginModel {
+    type Action = LoginAction;
+    fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
+        let new_model = &*self.clone();
+        let mut new_model = new_model.clone();
+        match action.key.as_str() {
+            "email" => new_model.email = action.value,
+            "password" => new_model.password = action.value,
+            _ => log!("Unknown key: {}", action.key),
+        }
+        Rc::new(new_model)
+    }
+}
 
 // #[derive(Validate)]
 // struct LoginModel {
@@ -20,29 +51,55 @@ use validator::{ Validate, ValidationError};
 // }
 
 #[fc(Login)]
-pub fn login()->Html {
-    let onsubmit = |e:SubmitEvent| {
+pub fn login() -> Html {
+    let model = use_reducer(|| LoginModel::default());
+
+    let model_ = model.clone();
+    use_effect(move || {
+        let model = model_.clone();
+        log!("model changed ", serde_json::to_string(&*model).unwrap());
+        || log!("")
+    });
+
+    let onsubmit = |e: SubmitEvent| {
         e.prevent_default();
-        let event:SubmitEvent = e.clone();
+        let event: SubmitEvent = e.clone();
         let target = &event.target().unwrap();
         log!("submit", target);
         log!("no debugger is pain in the ... is't like the old days! ");
-         log!(e);
-
-         //let serialized = serde_json::to_string(target).unwrap();
-        // log!(e.get());
-      //  log!(target.iter().map(|e| e.name().unwrap()).collect::<Vec<_>>());
+        log!(e);
     };
     let handle_submit = Callback::from(onsubmit);
-    let onchange = Callback::from(|e:Event| {
-        let event:Event = e.clone();
-        let target:EventTarget = (&event.target().unwrap()).clone();
-        log!("change", target.clone());
-        log!("value", target.dyn_into::<HtmlInputElement>().unwrap().value()); // YEY!!!
-       // log!(e.target().unwrap());
 
-    });
+    let model_ = model.clone();
+    let onkeypress = {
+        Callback::from(move |event: KeyboardEvent| {
+            let target: EventTarget = (&event.target().unwrap()).clone();
+            let html_target = target.dyn_into::<HtmlInputElement>().unwrap();
+            let name = html_target.clone().name();
+            let value = html_target.clone().value();
+            let action = LoginAction {
+                key: name,
+                value: value,
+            };
+            model_.dispatch(action)
+        })
+    };
 
+    let model_ = model.clone();
+    let onchange = {
+        Callback::from(move |event: Event| {
+            let target: EventTarget = event.target().unwrap().clone();
+            let html_target = target.dyn_into::<HtmlInputElement>().unwrap();
+            let name = html_target.clone().name();
+            let value = html_target.clone().value();
+            let action = LoginAction {
+                key: name,
+                value: value,
+            };
+            model_.dispatch(action)
+        })
+    };
 
     html!(<div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
@@ -54,7 +111,11 @@ pub fn login()->Html {
           <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500"> {"register"} </a>
         </p>
       </div>
-      <form class="mt-8 space-y-6" action="/api/auth/login" method="POST" onchange={onchange} onsubmit={handle_submit}>
+      <form class="mt-8 space-y-6" action="/api/auth/login"
+       method="POST"
+       onsubmit={handle_submit}
+       onchange={onchange}
+       onkeypress={onkeypress}>
         <input type="hidden" name="remember" value="true" />
         <div class="rounded-md shadow-sm -space-y-px">
           <div>

@@ -17,10 +17,9 @@ js-sys = "0.3.59"
 wasm-bindgen = "0.2.82"
 console_error_panic_hook = "0.1.7"
 serde_json = "1.0.82"
-yew_form = "0.1.7"
 validator = { version = "0.16.0", features = ["derive"] }
 serde = "1.0.141"
-web-sys= {fetures=["HtmlInputElement"], version="0.3"}
+web-sys= {fetures=["HtmlInputElement", "KeyboardEvent"], version="0.3"}
 
 [package.metadata.x]
 dev-css = "NODE_ENV=dev npx tailwindcss -c ./config/tailwind.config.js -o ./static/tailwind.css"
