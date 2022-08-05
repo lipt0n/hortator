@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  # Database service
+  database:
+    container_name: hortator-db
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: "db,test"
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  frontend:
+    container_name: hortator-frontend
+    build: ./frontend
+    image: hortator/hortator-frontend:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app:cached
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    container_name: hortator-backend
+    build: ./backend
+    image: hortator/hortator-backend:latest
+    ports:
+      - 8081:8081
+    volumes:
+      - ./backend:/app:cached
+    depends_on:
+      - database
+    restart: unless-stopped

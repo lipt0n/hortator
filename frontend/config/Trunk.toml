@@ -20,7 +20,7 @@ ignore = []
 
 [serve]
 # The address to serve on.
-address = "127.0.0.1"
+address = "0.0.0.0"
 # The port to serve on.
 port = 8080
 # Open a browser tab once the initial build is complete.
@@ -52,12 +52,12 @@ wasm_opt = "version_105"
 # backend = "ws://localhost:9000/api/ws"
 # ws = true
 
-# [[proxy]]
-# # This proxy example has a backend and a rewrite field. Requests received on `rewrite` will be
-# # proxied to the backend after rewriting the `rewrite` prefix to the `backend`'s URI prefix.
-# # E.G., `/api/v1/resource/x/y/z` -> `/resource/x/y/z`
-# rewrite = "/api/v1/"
-# backend = "http://localhost:9000/"
+[[proxy]]
+# This proxy example has a backend and a rewrite field. Requests received on `rewrite` will be
+# proxied to the backend after rewriting the `rewrite` prefix to the `backend`'s URI prefix.
+# E.G., `/api/v1/resource/x/y/z` -> `/resource/x/y/z`
+rewrite = "/api/v1/"
+backend = "http://backend:8081/"
 
 # [[proxy]]
 # # This proxy example has an insecure field. In this example,

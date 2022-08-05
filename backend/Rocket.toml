@@ -1,6 +1,8 @@
 [default]
 template_dir = "templates/"
 secret_key="4D5DCB53A281EBAECF5AA9B4AGHYTREDHKI12C11ASED"
+address = "0.0.0.0"
+port = 8081
 
 [default.databases.sea_orm]
 # Mysql

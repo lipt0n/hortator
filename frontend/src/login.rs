@@ -1,5 +1,4 @@
 use gloo_console::log;
-use std::collections::HashMap;
 
 use crate::form::{Form, Model};
 use yew::functional::function_component as fc;
@@ -28,11 +27,11 @@ pub fn login_internals() -> Html {
     let ctx = ctx_.unwrap();
     let form = &ctx.clone().form;
 
-    let ctx_clone = ctx.clone();
-    use_effect(move || {
-        log!("ITS WORKING! ", serde_json::to_string(&ctx_clone).unwrap());
-        || log!("- hook cleanup")
-    });
+    // let ctx_clone = ctx.clone();
+    // use_effect(move || {
+    //     log!("ITS WORKING! ", serde_json::to_string(&ctx_clone).unwrap());
+    //     || log!("- hook cleanup")
+    // });
 
     html! {
       <div>
@@ -90,7 +89,12 @@ pub fn login() -> Html {
           <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500"> {"register"} </a>
         </p>
       </div>
-      <Form form_id="form1">
+      <Form
+        form_id="form1"
+        debug={true}
+        target="/api/v1/auth/login"
+        class="mt-8 space-y-6"
+      >
        <LoginInternals />
       </Form>
     </div>
